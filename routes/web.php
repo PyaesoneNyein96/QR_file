@@ -31,11 +31,22 @@ Route::middleware('auth')->group(function () {
         Route::get('/files-create-page', 'createPage')->name('dashboard.fileUploadPage');
         Route::post('/files-upload', 'upload')->name('dashboard.fileUpload');
         Route::get('/files/{id}/delete', 'delete')->name('dashboard.fileDelete');
-        // action
+        Route::get('/files-history', 'fileHistory')->name('dashboard.filesUploadHistory');
 
-        Route::get('/files/{id}/download', 'download')->name('dashboard.fileDownload');
+        // action
+        Route::get('/files-qr-code/{id}', 'qrCode')->name('dashboard.fileQrCode');
+        Route::get('/files/{id}/download', 'fileDownload')->name('dashboard.fileDownload');
+        Route::get('/qr/{id}/download', 'qrDownload')->name('dashboard.qrDownload');
     });
 
+
+    Route::controller(CategoryController::class)->group(function () {
+        Route::get('/categories', 'categories')->name('dashboard.categories');
+        Route::post('/category-create', 'create')->name('dashboard.categoryCreate');
+        Route::get('/category/{id}/edit', 'edit')->name('dashboard.categoryEdit');
+        Route::post('/category/{id}/update', 'update')->name('dashboard.categoryUpdate');
+        Route::get('/category/{id}/delete', 'delete')->name('dashboard.categoryDelete');
+    });
 });
 
 

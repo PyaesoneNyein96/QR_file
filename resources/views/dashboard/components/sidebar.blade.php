@@ -46,7 +46,7 @@
                         <span class="icon pl-5">🗂️</span>
                         <span x-show="sidebarOpen">File List</span>
                     </a>
-                    <a href="#"
+                    <a href="{{ route('dashboard.filesUploadHistory') }}"
                         class="{{ Route::currentRouteName() == 'dashboard.filesUploadHistory' ? 'bg-slate-300 text-green' : '' }}  text-sm  hover:bg-slate-200 text-blue flex items-center space-x-3 p-2 rounded">
                         <span class="icon pl-5">🗂️</span>
                         <span x-show="sidebarOpen">File Upload History</span>

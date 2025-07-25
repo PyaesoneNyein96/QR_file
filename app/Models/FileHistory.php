@@ -16,4 +16,15 @@ class FileHistory extends Model
         'path', // Path of the file if applicable
         'qr_code' // QR code of the file if applicable
     ];
+
+    public function file()
+    {
+        return $this->belongsTo(File::class);
+    }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
+
 }

@@ -20,7 +20,7 @@ return new class extends Migration
             $table->string('type')->nullable();
             $table->bigInteger('size')->default(0); // Size in bytes
             $table->string('extension')->nullable();
-            $table->string('qr_link')->nullable();
+            $table->longText('qr_code')->nullable();
             $table->tinyInteger('status')->default(1); // pending, approved, rejected
             $table->text('description')->nullable();
             $table->timestamps();

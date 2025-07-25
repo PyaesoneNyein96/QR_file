@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
+use SimpleSoftwareIO\QrCode\Facades\QrCode;
 
 class FileController extends Controller
 {
@@ -17,14 +18,14 @@ class FileController extends Controller
     public function index()
     {
         $files = File::with('category')->get(); // Fetch files from the database
-        return view('dashboard.pages.fileList', compact('files')); // Ensure this points to the correct view
+        return view('dashboard.pages.files.fileList', compact('files')); // Ensure this points to the correct view
     }
 
     public function createPage()
     {
         $categories = Category::all(); // Fetch categories from the database
 
-        return view('dashboard.pages.fileUploadPage', compact('categories')); // Ensure this points to the correct view
+        return view('dashboard.pages.files.fileUploadPage', compact('categories')); // Ensure this points to the correct view
     }
 
 
@@ -42,17 +43,35 @@ class FileController extends Controller
 
 
 
-    public function download($id)
+    public function fileDownload($id)
     {
         $file = File::findOrFail($id); // Find the file by ID
 
-        if(!Storage::disk('public')->exists($file->path)) {
+        $file_path = str_replace('/storage', '', $file->path); // Adjust the path for storage
+
+        if(!Storage::disk('public')->exists($file_path)) {
             return redirect()->back()->with('error', 'File not found.');
         }else{
 
             $this->addFileHistory($file, 'downloaded');
 
-            return Storage::disk('public')->download($file->path);
+            return Storage::disk('public')->download(str_replace('/storage', '', ($file_path)));
+        }
+
+    }
+
+
+      public function qrDownload($id)
+    {
+        $file = File::findOrFail($id); // Find the file by ID
+
+        $file_path = str_replace('/storage', '', $file->qr_code); // Adjust the path for storage
+
+        if(!Storage::disk('public')->exists($file_path)) {
+            return redirect()->back()->with('error', 'File not found.');
+        }else{
+
+            return Storage::disk('public')->download(str_replace('/storage', '', ($file_path)));
         }
 
     }
@@ -70,6 +89,29 @@ class FileController extends Controller
         $this->addFileHistory($file, 'deleted');
 
         return redirect()->route('dashboard.files')->with('success', 'File deleted successfully!');
+    }
+
+
+    public function qrCode($id)
+    {
+
+        $file = File::findOrFail($id); // Find the file by ID
+
+        if(!$file->qr_code) {
+            return redirect()->back()->with('error', 'QR code not found for this file.');
+        }
+
+
+
+        return view('dashboard.pages.qr.qrCode', compact('file')); // Ensure this points to the correct view
+    }
+
+
+    public function fileHistory()
+    {
+        $histories = FileHistory::with(['file', 'user'])->latest()->get(); // Fetch file histories with related file and user
+
+        return view('dashboard.pages.files.fileHistory', compact('histories')); // Ensure this points to the correct view
     }
 
 
@@ -92,7 +134,7 @@ class FileController extends Controller
         $file = File::create([
             'name' => $request->name ??$fileName,
             'category_id' => $request->category_id,
-            'path' => $path . $fileName,
+            'path' => "/storage". $path . $fileName,
             'size' => $file->getSize(),
             'user_id' => Auth::id(),
             'extension' => $file->getClientOriginalExtension(),
@@ -100,6 +142,11 @@ class FileController extends Controller
             'type' => $file->getClientMimeType(),
             'status' => 1,
         ]);
+
+        $file->qr_code = $this->generateQRCode($file); // Generate QR code for the file
+        $file->save(); // Save the file record with QR code
+
+
 
         $this->addFileHistory($file, 'uploaded');
 
@@ -129,7 +176,7 @@ class FileController extends Controller
 
         $folder = $extFolders[$extension] ?? 'others';
 
-        return $path = "uploads/$folder/";
+        return $path = "/uploads/$folder/";
 
     }
 
@@ -145,6 +192,17 @@ class FileController extends Controller
             'path' => $file->path,
             'qr_code' => null, // Handle QR code generation if needed
         ]);
+    }
+
+
+    private function generateQRCode($file)
+    {
+        $qrCodeSvg = QrCode::size(200)->generate($file->path);
+
+        $path = "QR_codes/";
+        Storage::disk('public')->put($path . $file->name . '.svg', $qrCodeSvg);
+        $qrImageUrl = Storage::url($path . $file->name . '.svg');
+        return $qrImageUrl;
     }
 
 }

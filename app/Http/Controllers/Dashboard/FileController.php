@@ -17,7 +17,7 @@ class FileController extends Controller
 
     public function index()
     {
-        $files = File::with('category')->get(); // Fetch files from the database
+        $files = File::with('category')->latest()->paginate(20); // Fetch files from the database
         return view('dashboard.pages.files.fileList', compact('files')); // Ensure this points to the correct view
     }
 

@@ -1,6 +1,5 @@
 @extends('dashboard.dashboard-layout') <!-- Custom dashboard layout -->
 @section('title', 'File Upload') <!-- Custom title for the dashboard page -->
-@section('page-title', 'File Upload') <!-- Custom page title for the dashboard -->
 
 
 @section('content')

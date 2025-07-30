@@ -1,17 +1,15 @@
 @extends('dashboard.dashboard-layout') <!-- Custom dashboard layout -->
-@section('title', 'File Upload') <!-- Custom title for the dashboard page -->
-@section('page-title', 'File Upload') <!-- Custom page title for the dashboard -->
-
+@section('title', 'File List') <!-- Custom title for the dashboard page -->
 
 @section('content')
     <div class="max-w-12xl mx-auto p-4">
         <h2 class="text-2xl font-semibold  mb-4">📁 File List</h2>
 
-        <table class="min-w-full bg-white border rounded shadow">
+        <table class="min-w-full bg-white border rounded shadow text-center">
             <thead>
-                <tr class="bg-gray-100 text-gray-700 text-left">
+                <tr class="bg-gray-100 text-gray-700 ">
                     <th class="p-3 border-b">#</th>
-                    <th class="p-3 border-b">File Name</th>
+                    <th class="p-3 border-b text-left">File Name</th>
                     <th class="p-3 border-b">Size</th>
                     <th class="p-3 border-b">Link</th>
                     <th class="p-3 border-b">Upload by</th>
@@ -24,7 +22,7 @@
                 @forelse ($files as $index => $file)
                     <tr class="border-b hover:bg-gray-50">
                         <td class="p-3">{{ $index + 1 }}</td>
-                        <td class="p-3 max-w-[200px]">{{ $file->name }}</td>
+                        <td class="p-3 max-w-[200px] text-left">{{ $file->name }}</td>
                         <td class="p-3">{{ number_format($file->size / 1024, 2) }} KB</td>
                         <td class="p-3 max-w-[50px] overflow-hidden">
                             <a href="{{ asset($file->path) }}" target="_blank" class="text-blue-500 hover:underline">
@@ -68,5 +66,8 @@
                 @endforelse
             </tbody>
         </table>
+        <div class="mt-4">
+            {{ $files->links() }} <!-- Pagination links -->
+        </div>
     </div>
 @endsection

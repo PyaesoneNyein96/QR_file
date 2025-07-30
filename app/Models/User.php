@@ -53,4 +53,15 @@ class User extends Authenticatable
         return $this->role === 1;
     }
 
+    public function isUser(): bool
+    {
+        return $this->role === 2;
+    }
+
+    public function files()
+    {
+        return $this->hasMany(File::class);
+    }
+
+
 }

@@ -1,6 +1,6 @@
 @extends('dashboard.dashboard-layout') <!-- Custom dashboard layout -->
-@section('title', 'File Upload') <!-- Custom title for the dashboard page -->
-@section('page-title', 'File Histories') <!-- Custom page title for the dashboard -->
+
+@section('title', 'File Histories') <!-- Custom page title for the dashboard -->
 
 @section('content')
 
@@ -13,8 +13,7 @@
                     <th class="p-3 border-b">#</th>
                     <th class="p-3 border-b">File Name</th>
                     <th class="p-3 border-b">Type</th>
-                    <th class="p-3 border-b">Link</th>
-                    <th class="p-3 border-b">QR Code</th>
+
                     <th class="p-3 border-b">Uploaded by</th>
                     <th class="p-3 border-b">Category</th>
                     <th class="p-3 border-b">Actions</th>
@@ -28,16 +27,7 @@
                             {{ $history->file->name ?? null }}
                         </td>
                         <td class="p-3">{{ $history->type }}</td>
-                        <td class="p-3 max-w-[50px] overflow-hidden">
 
-                            {{ $history->file->path ?? null }}
-
-                        </td>
-                        <td class="p-3">
-                            <a href="#" class="text-blue-500 hover:underline">
-                                {{ $history->file->qr_link ?? 'N/A' }}
-                            </a>
-                        </td>
 
                         <td class="p-3">
                             {{ $history->user ? $history->user->name : 'Unknown' }}
